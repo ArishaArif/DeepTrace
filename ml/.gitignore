@@ -1,0 +1,4 @@
+# Model Weights & Binaries
+ml/weights/
+*.joblib
+*.pkl

@@ -7,7 +7,8 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 # Loaded once at import time, not per request
 _model, _, _preprocess = open_clip.create_model_and_transforms("ViT-B-32", pretrained="openai")
 _model = _model.to(_DEVICE).eval()
-_clf = joblib.load(os.path.join(_HERE, "deep_clf.joblib"))
+_WEIGHTS = os.environ.get("ML_WEIGHTS_DIR",os.path.join(os.path.dirname(os.path.abspath(__file__)), "weights"))
+_clf = joblib.load(os.path.join(_WEIGHTS, "deep_clf.joblib"))
 
 # Your teammate's function. Until it exists, we fall back (see predict_image).
 try:
