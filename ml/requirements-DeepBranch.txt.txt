@@ -1,0 +1,7 @@
+scikit-learn==1.6.1
+torch==2.11.0+cu130
+open_clip_torch==3.3.0
+opencv-python-headless==4.14.0
+joblib==1.6.0
+pillow
+numpy
