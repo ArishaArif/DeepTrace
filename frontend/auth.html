@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in – Fractal Lens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0E1014;--paper:#161a21;--ink:#eef1f6;--mute:#9aa3b2;--line:rgba(255,255,255,.16);--blue:#5b7cff;--pink:#ff4d8d;--green:#3ddc97}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.5}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.wrap{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+aside{padding:32px 40px;border-right:1.5px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;
+  background:var(--bg) radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1.3px) 0 0/22px 22px}
+@media(max-width:820px){aside{border-right:0;border-bottom:1.5px solid var(--line);padding:20px;gap:18px}.pts{display:none}}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;color:var(--ink);text-decoration:none}
+aside h2{font-size:clamp(1.9rem,4vw,3rem);font-weight:800;letter-spacing:-.035em;line-height:1.02;margin:0 0 14px;max-width:14ch}
+.pts{list-style:none;padding:0;margin:20px 0 0;max-width:42ch}
+.pts li{padding:10px 0;border-top:1px solid var(--line);color:var(--mute)}
+.small{font-size:.84rem;color:var(--mute);max-width:46ch}
+main{display:grid;place-items:center;padding:32px 20px}
+.box{width:100%;max-width:400px}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin:0 0 6px}
+.sub{color:var(--mute);margin:0 0 22px}
+label{display:block;font-weight:600;font-size:.95rem;margin:16px 0 6px}
+.field{position:relative}
+input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);padding:12px 14px;border-radius:0}
+input:focus-visible{outline:3px solid var(--blue);outline-offset:1px;border-color:var(--blue)}
+input[aria-invalid=true]{border-color:var(--pink)}
+.eye{position:absolute;right:6px;top:6px;bottom:6px;background:none;border:0;color:var(--mute);font:inherit;font-size:.85rem;cursor:pointer;padding:0 10px}
+.eye:focus-visible{outline:2px solid var(--blue)}
+.err{color:var(--pink);font-size:.86rem;margin:6px 0 0;min-height:0}
+.hint{color:var(--mute);font-size:.84rem;margin:6px 0 0}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:.9rem;color:var(--mute)}
+.chk input{margin-top:4px;accent-color:var(--blue);width:16px;height:16px}
+.go{width:100%;font:inherit;font-weight:700;background:var(--blue);color:#fff;border:0;padding:13px;margin-top:22px;cursor:pointer}
+.go:disabled{opacity:.6;cursor:wait}
+.go:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.formerr{border-left:4px solid var(--pink);background:var(--paper);padding:10px 14px;margin-top:16px;font-size:.9rem}
+.alt{margin-top:22px;color:var(--mute);font-size:.95rem}
+.alt a,.link{color:var(--ink);font-weight:600;background:none;border:0;font:inherit;font-weight:600;padding:0;cursor:pointer;text-decoration:underline}
+.demo{margin-top:26px;padding-top:14px;border-top:1px solid var(--line)}
+.tabs{display:flex;border:1.5px solid var(--line);margin-bottom:26px}
+.tabs a{flex:1;text-align:center;padding:11px 10px;color:var(--mute);text-decoration:none;font-weight:600}
+.tabs a:hover{color:var(--ink)}
+.tabs a[aria-current=page]{background:var(--paper);color:var(--ink);box-shadow:inset 0 -3px 0 var(--blue)}
+.tabs a:focus-visible{outline:3px solid var(--blue);outline-offset:-3px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside>
+  <a class="brand" href="index.html">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#eef1f6" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="26" height="26"/><rect x="2" y="2" width="13" height="13" fill="#5b7cff" stroke="none"/><rect x="15" y="15" width="6.5" height="6.5" fill="#ff4d8d" stroke="none"/><rect x="8.5" y="8.5" width="6.5" height="6.5" stroke="#fff"/></svg>
+    Fractal Lens
+  </a>
+  <div>
+    <h2>See which regions give a fake away.</h2>
+    <ul class="pts">
+      <li>Scan photos and short videos.</li>
+      <li>See the regions that raised the score.</li>
+      <li>Get an estimate, not proof.</li>
+    </ul>
+  </div>
+  <p class="small">Screening tool, not forensic evidence.</p>
+</aside>
+
+<main>
+<div class="box">
+  <nav class="tabs" aria-label="Account"><a href="#signin" id="t-in">Sign in</a><a href="#register" id="t-reg">Get started</a></nav>
+
+  <form id="signin" novalidate>
+    <h1>Sign in</h1>
+    <p class="sub">Welcome back. Enter your details to continue.</p>
+    <label for="si-email">Email</label>
+    <input id="si-email" type="email" autocomplete="email" aria-describedby="si-email-e">
+    <p class="err" id="si-email-e"></p>
+    <label for="si-pass">Password</label>
+    <div class="field"><input id="si-pass" type="password" autocomplete="current-password" aria-describedby="si-pass-e">
+      <button type="button" class="eye" aria-pressed="false" data-for="si-pass">Show</button></div>
+    <p class="err" id="si-pass-e"></p>
+    <div class="formerr" id="si-form-e" role="alert" hidden></div>
+    <button class="go" type="submit">Sign in</button>
+    <p class="alt">New here? <a href="#register">Get started</a></p>
+    <p class="alt"><button type="button" class="link" id="forgot">Forgot your password?</button></p>
+    <p class="hint" id="forgot-msg" hidden>Password reset needs the Backend. It is not connected in demo mode.</p>
+  </form>
+
+  <form id="register" novalidate hidden>
+    <h1>Get started</h1>
+    <p class="sub">Create an account to try the detector.</p>
+    <label for="rg-name">Name</label>
+    <input id="rg-name" type="text" autocomplete="name" aria-describedby="rg-name-e">
+    <p class="err" id="rg-name-e"></p>
+    <label for="rg-email">Email</label>
+    <input id="rg-email" type="email" autocomplete="email" aria-describedby="rg-email-e">
+    <p class="err" id="rg-email-e"></p>
+    <label for="rg-pass">Password</label>
+    <div class="field"><input id="rg-pass" type="password" autocomplete="new-password" aria-describedby="rg-pass-e rg-pass-h">
+      <button type="button" class="eye" aria-pressed="false" data-for="rg-pass">Show</button></div>
+    <p class="hint" id="rg-pass-h">At least 8 characters.</p>
+    <p class="err" id="rg-pass-e"></p>
+    <label class="chk"><input id="rg-ok" type="checkbox" aria-describedby="rg-ok-e">
+      <span>I understand results are estimates and are not forensic evidence.</span></label>
+    <p class="err" id="rg-ok-e"></p>
+    <div class="formerr" id="rg-form-e" role="alert" hidden></div>
+    <button class="go" type="submit">Create account</button>
+    <p class="alt">Already have an account? <a href="#signin">Sign in</a></p>
+  </form>
+
+  <p class="small demo mono" id="demo">Demo mode: no account is created and no password is saved or sent anywhere.</p>
+</div>
+</main>
+</div>
+
+<script>
+/* ---- Settings: ask Backend for the real values ---- */
+const CONFIG = {
+  MOCK: true,                         // set to false when the API has auth
+  API_URL: "http://localhost:8000",
+  LOGIN_PATH: "/auth/login",          // placeholder, confirm with Backend
+  REGISTER_PATH: "/auth/register",    // placeholder, confirm with Backend
+  NEXT: "index.html"                  // where to go after success
+};
+/* Real mode: send JSON {email, password} (and {name} for register) with credentials:"include",
+   and let the server set a secure httpOnly cookie. Do not keep tokens in localStorage. */
+
+const $ = id => document.getElementById(id);
+const forms = { signin: $("signin"), register: $("register") };
+
+function view() {
+  const reg = location.hash === "#register";
+  forms.signin.hidden = reg; forms.register.hidden = !reg;
+  $("t-in").toggleAttribute("aria-current", !reg); $("t-reg").toggleAttribute("aria-current", reg);
+  $("t-in").setAttribute("aria-current", reg ? "false" : "page"); $("t-reg").setAttribute("aria-current", reg ? "page" : "false");
+  document.title = (reg ? "Get started" : "Sign in") + " – Fractal Lens";
+  (reg ? $("rg-name") : $("si-email")).focus({ preventScroll: true });
+}
+addEventListener("hashchange", view); view();
+
+document.querySelectorAll(".eye").forEach(b => b.onclick = () => {
+  const i = $(b.dataset.for), show = i.type === "password";
+  i.type = show ? "text" : "password"; b.textContent = show ? "Hide" : "Show"; b.setAttribute("aria-pressed", show);
+});
+$("forgot").onclick = () => $("forgot-msg").hidden = false;
+$("demo").hidden = !CONFIG.MOCK;
+
+function bad(id, msg) {
+  const i = $(id), e = $(id + "-e");
+  if (i) i.setAttribute("aria-invalid", !!msg);
+  if (e) e.textContent = msg || "";
+  return !!msg;
+}
+const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+function check(kind) {
+  const p = kind === "signin" ? "si" : "rg", em = $(p + "-email").value.trim(), pw = $(p + "-pass").value;
+  let first = null, flag = (id, m) => { if (bad(id, m) && !first) first = id; };
+  if (kind === "register") flag("rg-name", $("rg-name").value.trim() ? "" : "Enter your name.");
+  flag(p + "-email", !em ? "Enter your email." : emailOk(em) ? "" : "Enter a valid email, like name@example.com.");
+  flag(p + "-pass", !pw ? "Enter your password." : kind === "register" && pw.length < 8 ? "Use at least 8 characters." : "");
+  if (kind === "register") flag("rg-ok", $("rg-ok").checked ? "" : "Tick the box to continue.");
+  if (first) $(first).focus();
+  return !first;
+}
+
+async function submit(kind, e) {
+  e.preventDefault();
+  const p = kind === "signin" ? "si" : "rg", btn = forms[kind].querySelector(".go"), fe = $(p + "-form-e");
+  fe.hidden = true;
+  if (!check(kind)) return;
+  const label = btn.textContent; btn.disabled = true; btn.textContent = kind === "signin" ? "Signing in…" : "Creating account…";
+  const email = $(p + "-email").value.trim(), name = kind === "register" ? $("rg-name").value.trim() : email.split("@")[0];
+  try {
+    if (CONFIG.MOCK) {
+      await new Promise(r => setTimeout(r, 700));
+      sessionStorage.setItem("fl_user", JSON.stringify({ name, email }));   // never store the password
+    } else {
+      const body = { email, password: $(p + "-pass").value }; if (kind === "register") body.name = name;
+      const r = await fetch(CONFIG.API_URL + (kind === "signin" ? CONFIG.LOGIN_PATH : CONFIG.REGISTER_PATH),
+        { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.message || (r.status === 401 ? "Email or password is not correct." : "The server replied " + r.status + ".")); }
+      sessionStorage.setItem("fl_user", JSON.stringify({ name, email }));
+    }
+    location.href = CONFIG.NEXT;
+  } catch (err) {
+    fe.textContent = err.message + " Check your details and try again."; fe.hidden = false;
+    btn.disabled = false; btn.textContent = label;
+  }
+}
+forms.signin.onsubmit = e => submit("signin", e);
+forms.register.onsubmit = e => submit("register", e);
+</script>
+</body>
+</html>

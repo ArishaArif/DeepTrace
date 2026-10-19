@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepTrace – Sign In</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg-dark: #0B0E14;
+  --bg-panel: #11151F;
+  --ink: #F1F5F9;
+  --mute: #94A3B8;
+  --line: rgba(255, 255, 255, 0.08);
+  --blue: #3B82F6;
+  --blue-hover: #2563EB;
+  --card-bg: rgba(255, 255, 255, 0.02);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark);
+  display: flex;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono { font-family: "IBM Plex Mono", monospace; }
+
+/* --- SPLIT LAYOUT --- */
+.split-container {
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+@media (max-width: 900px) {
+  .split-container { flex-direction: column; }
+  .left-hero { display: none; }
+}
+
+/* --- LEFT HERO PANEL --- */
+.left-hero {
+  flex: 1;
+  background: radial-gradient(circle at 20% 30%, rgba(29, 78, 216, 0.25) 0%, transparent 60%),
+              radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+              #070A0F;
+  border-right: 1px solid var(--line);
+  padding: 48px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #FFF;
+  text-decoration: none;
+}
+
+.hero-content {
+  max-width: 480px;
+  margin: auto 0;
+}
+
+.hero-content h1 {
+  font-size: clamp(2.2rem, 3.5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: #FFF;
+  margin: 0 0 16px;
+}
+
+.hero-content p.subtitle {
+  color: var(--mute);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  margin: 0 0 40px;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  color: var(--blue);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.feature-text h4 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #FFF;
+}
+
+.feature-text p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--mute);
+  line-height: 1.45;
+}
+
+.hero-footer {
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+/* --- RIGHT FORM PANEL --- */
+.right-form {
+  flex: 1;
+  background: var(--bg-panel);
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+}
+
+.form-box {
+  width: 100%;
+  max-width: 420px;
+}
+
+.form-header h2 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #FFF;
+  letter-spacing: -0.025em;
+  margin: 0 0 6px;
+}
+
+.form-header p {
+  color: var(--mute);
+  font-size: 0.92rem;
+  margin: 0 0 32px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.input-group input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #FFF;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.input-group input::placeholder {
+  color: #475569;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.forgot-link {
+  font-size: 0.82rem;
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+.btn-submit {
+  width: 100%;
+  background: var(--blue);
+  color: #FFF;
+  border: 0;
+  border-radius: 10px;
+  padding: 13px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.btn-submit:hover { background: var(--blue-hover); }
+
+/* --- DIVIDER --- */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.divider span { padding: 0 14px; }
+
+/* --- DUMMY GOOGLE & FREE DEMO BUTTONS --- */
+.btn-social {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 16px;
+  color: #FFF;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  margin-bottom: 12px;
+}
+
+.btn-social:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.btn-demo {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--blue);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-demo:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: var(--blue);
+  color: #FFF;
+}
+
+.sec-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #64748B;
+  margin-top: 24px;
+}
+
+.form-footer {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--mute);
+  margin-top: 28px;
+}
+
+.form-footer a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="split-container">
+  <!-- LEFT HERO PANEL (Exact match to reference image) -->
+  <div class="left-hero">
+    <a class="brand" href="#">
+      <svg width="28" height="28" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2.2">
+        <rect x="2" y="2" width="26" height="26" rx="4"/>
+        <rect x="2" y="2" width="13" height="13" fill="#3B82F6" stroke="none"/>
+        <rect x="15" y="15" width="6.5" height="6.5" fill="#FF4D8D" stroke="none"/>
+        <rect x="8.5" y="8.5" width="6.5" height="6.5" stroke="#FFF"/>
+      </svg>
+      DeepTrace
+    </a>
+
+    <div class="hero-content">
+      <h1>Detect AI-generated content with confidence</h1>
+      <p class="subtitle">Run instant checks for images and video—and export results for verification workflows.</p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="feature-text">
+            <h4>Privacy-first processing</h4>
+            <p>Encrypted in transit. Your media data stays private and secure.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="feature-text">
+            <h4>Explainable results</h4>
+            <p>Confidence score + patch-level signal breakdown with heatmaps.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="feature-text">
+            <h4>Built to prevent fraud</h4>
+            <p>Designed for verification pipelines and high-volume analysis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-footer mono">
+      © 2026 DeepTrace. All rights reserved.
+    </div>
+  </div>
+
+  <!-- RIGHT FORM PANEL -->
+  <div class="right-form">
+    <div class="form-box">
+      <div class="form-header">
+        <h2>Welcome back</h2>
+        <p>Sign in to your account to continue</p>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="input-group">
+          <div class="label-row">
+            <label for="password">Password</label>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+          <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Sign in</button>
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Dummy Google Sign In Button -->
+      <button type="button" class="btn-social" onclick="handleGoogleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        Sign in with Google
+      </button>
+
+      <!-- Continue with Free Demo Button -->
+      <!-- Button link -->
+<a href="app.html" class="btn-demo" onclick="enableDemoSession()">
+  Continue with free demo →
+</a>
+
+      <div class="sec-badge mono">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secured with end-to-end encryption
+      </div>
+
+      <div class="form-footer">
+        Don't have an account? <a href="#">Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById("email").value;
+  // Save user session and enter main app dashboard
+  sessionStorage.setItem("fl_user", JSON.stringify({ name: email.split("@")[0] }));
+  // JS Redirects inside script tag
+window.location.href = "app.html";
+}
+
+function handleGoogleSignIn() {
+  sessionStorage.setItem("fl_user", JSON.stringify({ name: "Google User" }));
+  // JS Redirects inside script tag
+window.location.href = "app.html";
+}
+
+function enableDemoSession() {
+  sessionStorage.setItem("fl_user", JSON.stringify({ name: "Demo User" }));
+}
+</script>
+
+</body>
+</html>
