@@ -1,0 +1,43 @@
+{
+  "position": {
+    "real": {
+      "border_mean": 0.483638197183609,
+      "center_mean": 0.5046789050102234,
+      "border_minus_center": -0.02104070782661438,
+      "hotspot_position": [
+        2,
+        4
+      ],
+      "hotspot_value": 0.5197864174842834,
+      "mean_at_hotspot_overall": 0.4950970709323883
+    },
+    "fake": {
+      "border_mean": 0.4968045651912689,
+      "center_mean": 0.511690080165863,
+      "border_minus_center": -0.014885514974594116,
+      "hotspot_position": [
+        2,
+        4
+      ],
+      "hotspot_value": 0.5258933305740356,
+      "mean_at_hotspot_overall": 0.504736602306366
+    },
+    "grid_shapes": [
+      "(7, 7)"
+    ]
+  },
+  "proxy": {
+    "pearson_r_brightness": 0.09305794537067413,
+    "pearson_p_brightness": 0.0,
+    "pearson_r_contrast": 0.04754490405321121,
+    "pearson_p_contrast": 0.0,
+    "n_patches": 196000,
+    "warning": []
+  },
+  "border_hotspot": {
+    "fake_images": 2000,
+    "hotspot_on_border": 837,
+    "fraction_on_border": 0.4185,
+    "border_patch_fraction_of_grid": 0.4897959183673469
+  }
+}

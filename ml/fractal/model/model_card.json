@@ -1,0 +1,165 @@
+{
+  "binarization_method": "highpass",
+  "feature_names": [
+    "D",
+    "lac4",
+    "lac8",
+    "lac16"
+  ],
+  "selected_candidate": "hgb_regularized",
+  "model_type": "hist_gradient_boosting",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "max_depth": 3,
+    "max_iter": 200,
+    "min_samples_leaf": 200,
+    "l2_regularization": 1.0,
+    "early_stopping": true,
+    "validation_fraction": 0.1,
+    "random_state": 42
+  },
+  "threshold": 0.5,
+  "aggregation": "mean of patch probabilities",
+  "patch_size": 64,
+  "stride": 32,
+  "seed": 42,
+  "cv_folds": 5,
+  "train_images": 20000,
+  "train_patches": 980000,
+  "val_images": 4000,
+  "val_patches": 196000,
+  "cross_validation": [
+    {
+      "candidate": "logreg_C0.1",
+      "family": "logistic_regression",
+      "params": {
+        "C": 0.1,
+        "max_iter": 500,
+        "class_weight": "balanced"
+      },
+      "image_auc_folds": [
+        0.5413862500000001,
+        0.5299462500000001,
+        0.53098275,
+        0.5353077500000001,
+        0.55335825
+      ],
+      "cv_image_auc": 0.53819625,
+      "cv_image_auc_std": 0.008584903709419242,
+      "cv_patch_auc": 0.5119023214285714,
+      "cv_image_auc_mean_agg": 0.5380494
+    },
+    {
+      "candidate": "logreg_C1.0",
+      "family": "logistic_regression",
+      "params": {
+        "C": 1.0,
+        "max_iter": 500,
+        "class_weight": "balanced"
+      },
+      "image_auc_folds": [
+        0.5413862500000001,
+        0.5299462500000001,
+        0.53098275,
+        0.5353075,
+        0.55437025
+      ],
+      "cv_image_auc": 0.5383986000000001,
+      "cv_image_auc_std": 0.008944401681498862,
+      "cv_patch_auc": 0.5119328376259892,
+      "cv_image_auc_mean_agg": 0.5382429799999999
+    },
+    {
+      "candidate": "hgb_regularized",
+      "family": "hist_gradient_boosting",
+      "params": {
+        "learning_rate": 0.05,
+        "max_depth": 3,
+        "max_iter": 200,
+        "min_samples_leaf": 200,
+        "l2_regularization": 1.0,
+        "early_stopping": true,
+        "validation_fraction": 0.1,
+        "random_state": 42
+      },
+      "image_auc_folds": [
+        0.69144575,
+        0.6822257500000002,
+        0.67552525,
+        0.69668525,
+        0.687662
+      ],
+      "cv_image_auc": 0.6867088,
+      "cv_image_auc_std": 0.007321835398996613,
+      "cv_patch_auc": 0.557128176386922,
+      "cv_image_auc_mean_agg": 0.68660241
+    },
+    {
+      "candidate": "hgb_shallow",
+      "family": "hist_gradient_boosting",
+      "params": {
+        "learning_rate": 0.05,
+        "max_depth": 2,
+        "max_iter": 300,
+        "min_samples_leaf": 500,
+        "l2_regularization": 1.0,
+        "early_stopping": true,
+        "validation_fraction": 0.1,
+        "random_state": 42
+      },
+      "image_auc_folds": [
+        0.67293575,
+        0.6623330000000001,
+        0.6537265,
+        0.677674,
+        0.66882975
+      ],
+      "cv_image_auc": 0.6670998,
+      "cv_image_auc_std": 0.00837176540730807,
+      "cv_patch_auc": 0.5505383208413162,
+      "cv_image_auc_mean_agg": 0.66694043
+    }
+  ],
+  "val_metrics": {
+    "image_auc": 0.69338225,
+    "patch_auc": 0.557342695335277,
+    "image_accuracy": 0.6405,
+    "image_precision": 0.6186655405405406,
+    "image_recall": 0.7325,
+    "image_f1": 0.6707875457875457,
+    "confusion_matrix": [
+      [
+        1097,
+        903
+      ],
+      [
+        535,
+        1465
+      ]
+    ],
+    "threshold": 0.5,
+    "n_images": 4000,
+    "n_patches": 196000,
+    "calibration": {
+      "mean_patch_prob_real": 0.4949884673292069,
+      "mean_patch_prob_fake": 0.5046279643363747,
+      "mean_image_prob_real": 0.4949884673292069,
+      "mean_image_prob_fake": 0.5046279643363747
+    },
+    "aggregation_diagnostic": {
+      "mean": 0.69338225,
+      "max": 0.5933435,
+      "top20pct_mean": 0.6259655,
+      "n_images": 4000
+    }
+  },
+  "library_versions": {
+    "python": "3.12.10",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "pandas": "3.0.6",
+    "joblib": "1.6.0"
+  },
+  "date": "2026-10-19T10:50:03"
+}

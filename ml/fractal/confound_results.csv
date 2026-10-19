@@ -1,0 +1,9 @@
+check,label,value,n,feature,auc_signed,auc_abs,higher_in,real_mean,fake_mean,cohens_d,auc_std,accuracy_mean,original_auc,drop
+size_mode,real,256x256 RGB,500.0,,,,,,,,,,,
+size_mode,fake,256x256 RGB,500.0,,,,,,,,,,,
+file_size,,,,file_bytes,0.461494,0.5385059999999999,real,28570.254,28142.848,-0.11007267041085621,,,,
+recompression,,,,combined_lr_5fold,0.51212,0.51212,,,,,0.029192560696177365,0.528,0.5819599999999999,0.0698399999999999
+brightness_contrast,,,,brightness_mean,0.502624,0.502624,fake,0.4482701790034771,0.44846625983715055,0.001773906510381578,,,,
+brightness_contrast,,,,brightness_std,0.446248,0.553752,real,0.22753361935913563,0.22016927191615104,-0.1737849408824732,,,,
+controls,,,,fractal_plus_brightness,0.58236,0.58236,,,,,0.04930434463614743,0.55,0.5819599999999999,-0.00040000000000006697
+controls,,,,brightness_only,0.54926,0.54926,,,,,0.03938576392556069,,,

@@ -1,0 +1,10 @@
+@"
+sample/
+data/
+*.zip
+cache/
+tmp_recompressed/
+__pycache__/
+.pytest_cache/
+*.pyc
+"@ | Set-Content -Encoding utf8 ml\fractal\.gitignores

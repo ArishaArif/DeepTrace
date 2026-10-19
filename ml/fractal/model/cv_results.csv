@@ -1,0 +1,5 @@
+candidate,family,cv_image_auc,cv_image_auc_std,cv_patch_auc,cv_image_auc_mean_agg,params
+logreg_C0.1,logistic_regression,0.53819625,0.008584903709419242,0.5119023214285714,0.5380494,"{""C"": 0.1, ""max_iter"": 500, ""class_weight"": ""balanced""}"
+logreg_C1.0,logistic_regression,0.5383986000000001,0.008944401681498862,0.5119328376259892,0.5382429799999999,"{""C"": 1.0, ""max_iter"": 500, ""class_weight"": ""balanced""}"
+hgb_regularized,hist_gradient_boosting,0.6867088,0.007321835398996613,0.557128176386922,0.68660241,"{""learning_rate"": 0.05, ""max_depth"": 3, ""max_iter"": 200, ""min_samples_leaf"": 200, ""l2_regularization"": 1.0, ""early_stopping"": true, ""validation_fraction"": 0.1, ""random_state"": 42}"
+hgb_shallow,hist_gradient_boosting,0.6670998,0.00837176540730807,0.5505383208413162,0.66694043,"{""learning_rate"": 0.05, ""max_depth"": 2, ""max_iter"": 300, ""min_samples_leaf"": 500, ""l2_regularization"": 1.0, ""early_stopping"": true, ""validation_fraction"": 0.1, ""random_state"": 42}"
