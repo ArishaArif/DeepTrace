@@ -1,0 +1,82 @@
+{
+  "quantitative": {
+    "heat_concentration_top20pct": {
+      "real_mean": 0.23246750235557556,
+      "fake_mean": 0.22722002863883972
+    },
+    "center_vs_border": {
+      "real_center": 0.4972239537388086,
+      "real_border": 0.4783833218738437,
+      "fake_center": 0.515157600492239,
+      "fake_border": 0.5083923007398844
+    },
+    "flat_heatmaps_fraction_std_below_0.02": 0.0015,
+    "brightness_correlation_mean": -0.0684858417265421,
+    "contrast_correlation_mean": 0.016676371997928135,
+    "n_images": 4000
+  },
+  "deletion": {
+    "per_k": {
+      "2": {
+        "n_images": 200,
+        "hottest_mean_drop": 0.21360679849982261,
+        "hottest_ci95": [
+          0.21280404902622105,
+          0.21441934311017397
+        ],
+        "random_mean_drop": 0.21361108891665936,
+        "random_ci95": [
+          0.21279854796193542,
+          0.2144074741579592
+        ],
+        "mean_difference": -4.290416836738587e-06,
+        "difference_ci95": [
+          -7.715553641319273e-05,
+          5.741516090929507e-05
+        ],
+        "faithful": false
+      },
+      "4": {
+        "n_images": 200,
+        "hottest_mean_drop": 0.21360609024763108,
+        "hottest_ci95": [
+          0.21280403131991626,
+          0.21441727147251366
+        ],
+        "random_mean_drop": 0.21357381419837473,
+        "random_ci95": [
+          0.21278040786385538,
+          0.21436184131726624
+        ],
+        "mean_difference": 3.227604925632469e-05,
+        "difference_ci95": [
+          -2.9543222114443698e-05,
+          0.00010298784859478451
+        ],
+        "faithful": false
+      },
+      "8": {
+        "n_images": 200,
+        "hottest_mean_drop": 0.2135745607316494,
+        "hottest_ci95": [
+          0.2127753887064755,
+          0.21437624789774418
+        ],
+        "random_mean_drop": 0.2135682478994131,
+        "random_ci95": [
+          0.21277676445618274,
+          0.2143589572645724
+        ],
+        "mean_difference": 6.312832236289867e-06,
+        "difference_ci95": [
+          -8.335120938718338e-05,
+          0.00010855708010494683
+        ],
+        "faithful": false
+      }
+    },
+    "n_random_draws": 10,
+    "blur_sigma": 4.0
+  },
+  "date": "2026-10-19 21:19:01.715916"
+}

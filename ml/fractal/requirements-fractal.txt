@@ -1,0 +1,13 @@
+# Fractal branch (v2) pinned environment — freeze for reproducibility.
+# Python 3.12.10. Exact versions the frozen v2 model was trained, verified and
+# smoke-tested on. Install with:  pip install -r requirements-fractal.txt
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.1
+pandas==3.0.6
+joblib==1.6.0
+pillow==13.0.0
+pyarrow==26.0.0
+tqdm==4.70.1
+matplotlib==3.11.2
+pytest

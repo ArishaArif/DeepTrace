@@ -15,7 +15,10 @@ except ImportError:
     from config import FEATURES, MIN_SIZE, PATCH, STRIDE
     from fractal_features import extract_patches, features_for_patches, load_gray
 
-MODEL_PATH = Path(__file__).resolve().parent / "model" / "fractal_clf.joblib"
+# v2 model (candidate F feature set) is the frozen Day 3 final model; v1 is kept
+# intact in model/v1/. The bundle records which candidate to compute, so the same
+# loader also works if pointed back at a v1 bundle (plain core features).
+MODEL_PATH = Path(__file__).resolve().parent / "model" / "v2" / "fractal_clf.joblib"
 MODEL: dict = {}
 LAST_LOAD_SECONDS: list = [0.0]
 
@@ -47,6 +50,7 @@ def _load_model():
     bundle = joblib.load(MODEL_PATH)
     MODEL["model"] = bundle["pipeline"]
     MODEL["method"] = bundle["method"]
+    MODEL["candidate"] = bundle.get("candidate")  # None for v1 (core features only)
     LAST_LOAD_SECONDS[0] = time.perf_counter() - start
     return MODEL["model"]
 
@@ -56,7 +60,12 @@ def _score_array(arr):
     if arr.ndim != 2:
         raise ValueError(f"expected a 2D grayscale array, got {arr.shape}")
     patches, rows, cols = extract_patches(arr)
-    feats = features_for_patches(patches, method=MODEL["method"])
+    candidate = MODEL.get("candidate")
+    if candidate:
+        from .extra_features import compute_candidate
+        feats = compute_candidate(candidate, patches, method=MODEL["method"])
+    else:
+        feats = features_for_patches(patches, method=MODEL["method"])
     proba = model.predict_proba(feats)[:, 1].astype(np.float32)
     return proba.reshape(rows, cols)
 

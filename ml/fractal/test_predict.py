@@ -12,7 +12,10 @@ ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT.parent
 sys.path.insert(0, str(PROJECT))
 
-from fractal import predict_fractal as pf
+import importlib
+
+from fractal import predict_fractal as pf_module  # the re-exported function
+pf = importlib.import_module("fractal.predict_fractal")  # the module, for internals
 from fractal.config import MIN_SIZE, PATCH, SEED, STRIDE
 from fractal.fractal_features import extract_patches, features_for_patches, load_gray
 
@@ -156,26 +159,40 @@ def test_speed():
 @check("predict_fractal agrees with the cached feature pipeline on 20 val images")
 def test_cache_parity():
     import pandas as pd
+    from fractal.extra_features import CANDIDATE_FEATURES, compute_candidate
 
-    frame = pd.read_parquet(CACHE_DIR / "features_val.parquet", columns=["image_id", "label", "row", "col", "D", "lac4", "lac8", "lac16"])
+    model = pf._load_model()
+    method = pf.MODEL["method"]
+    candidate = pf.MODEL.get("candidate")
     manifest = {row["image_id"]: row["path"] for row in _manifest_rows()}
+
+    if candidate:
+        # v2: compare against the cached candidate feature set
+        feat_cols = CANDIDATE_FEATURES[candidate]
+        frame = pd.read_parquet(CACHE_DIR / f"features_{candidate}_val.parquet",
+                                columns=["image_id", "label", "row", "col"] + feat_cols)
+    else:
+        # v1: core features only
+        frame = pd.read_parquet(CACHE_DIR / "features_val.parquet",
+                                columns=["image_id", "label", "row", "col", "D", "lac4", "lac8", "lac16"])
+
     ids = sorted(frame["image_id"].unique())
     rng = np.random.default_rng(SEED)
     picked = [ids[i] for i in rng.choice(len(ids), size=min(20, len(ids)), replace=False)]
-    model = pf._load_model()
-    method = pf.MODEL["method"]
     worst = 0.0
     for image_id in picked:
-        rows = frame[frame["image_id"] == image_id]
         path = manifest[image_id]
         arr = load_gray(path)
         patches, n_rows, n_cols = extract_patches(arr)
-        feats = features_for_patches(patches, method=method)
+        if candidate:
+            feats = compute_candidate(candidate, patches, method=method)
+        else:
+            feats = features_for_patches(patches, method=method)
         reference = model.predict_proba(feats)[:, 1].reshape(n_rows, n_cols)
         live = pf.predict_fractal(path)["patch_scores"]
         assert live.shape == reference.shape, (image_id, live.shape, reference.shape)
         worst = max(worst, float(np.max(np.abs(live - reference))))
-    print(f"     parity: max absolute difference over {len(picked)} images = {worst:.2e}")
+    print(f"     parity ({candidate or 'v1'}): max absolute difference over {len(picked)} images = {worst:.2e}")
     assert worst <= 1e-5, f"inference and cache disagree by {worst}"
 
 

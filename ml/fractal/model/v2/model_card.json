@@ -1,0 +1,83 @@
+{
+  "version": "v2",
+  "binarization_method": "highpass",
+  "candidate": "F",
+  "feature_names": [
+    "D",
+    "lac4",
+    "lac8",
+    "lac16",
+    "lac2",
+    "lac32",
+    "r2",
+    "slope_small",
+    "slope_large",
+    "slope_diff",
+    "D0_grad",
+    "D1_grad",
+    "D2_grad",
+    "width_grad",
+    "D0_int",
+    "D1_int",
+    "D2_int",
+    "width_int",
+    "D_mean",
+    "lac4_mean",
+    "lac8_mean",
+    "lac16_mean"
+  ],
+  "selected_candidate": "hgb_regularized",
+  "model_type": "hist_gradient_boosting",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "max_depth": 3,
+    "max_iter": 200,
+    "min_samples_leaf": 200,
+    "l2_regularization": 1.0,
+    "early_stopping": true,
+    "validation_fraction": 0.1,
+    "random_state": 42
+  },
+  "threshold": 0.5,
+  "aggregation": "mean of patch probabilities",
+  "patch_size": 64,
+  "stride": 32,
+  "seed": 42,
+  "train_images": 20000,
+  "train_patches": 980000,
+  "val_images": 4000,
+  "val_patches": 196000,
+  "cv_image_auc": 0.7691,
+  "cv_image_auc_std": 0.0026,
+  "val_metrics": {
+    "image_auc": 0.7802445,
+    "patch_auc": 0.6019850386817993,
+    "image_accuracy": 0.705,
+    "image_precision": 0.6714046822742475,
+    "image_recall": 0.803,
+    "image_f1": 0.7313296903460837,
+    "confusion_matrix": [
+      [
+        1214,
+        786
+      ],
+      [
+        394,
+        1606
+      ]
+    ],
+    "threshold": 0.5,
+    "n_images": 4000,
+    "n_patches": 196000,
+    "inference_ms_per_image_warm": 129.52860000223154
+  },
+  "library_versions": {
+    "python": "3.12.10",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "pandas": "3.0.6",
+    "joblib": "1.6.0"
+  },
+  "date": "2026-10-19T19:48:44"
+}
