@@ -1,48 +1,58 @@
-"""Day 1: dummy predictions. Day 2: real ones, picked up automatically
-once the deep branch's ml/predict.py exists."""
-import hashlib
-import os
-import threading
+import sys
+from pathlib import Path
+from typing import Dict, Any
 
-import numpy as np
-from PIL import Image
+# Ensure root directory is on PATH so ml/ modules import cleanly
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
 
-from app import config
-from app.config import THRESHOLD
+# Import interfaces directly from ML modules[cite: 1, 2]
+from ml.deep.predict import predict_image, predict_deep
+from ml.fractal.predict import predict_fractal
+from app.video import extract_frames, cleanup_frames
 
-# Limits how many model calls run at once (CPU/RAM protection). Extra requests simply wait.
-INFER_SLOT = threading.BoundedSemaphore(config.MAX_CONCURRENT_JOBS)
+def run_image_pipeline(image_path: str) -> Dict[str, Any]:
+    """
+    Executes ML pipeline for single image via deep branch predict_image fusion wrapper[cite: 1].
+    """
+    result = predict_image(image_path)
+    return {
+        "verdict": result.get("verdict", "Real"),
+        "score": float(result.get("score", 0.0)),
+        "patch_scores": result.get("patch_scores", [])
+    }
 
-try:
-    if os.getenv("USE_DUMMY") == "1":
-        raise ImportError
-    from ml.predict import predict_image as _real_predict   # owned by DEEP BRANCH
-    DUMMY = False
-except ImportError:
-    DUMMY = True
+def run_video_pipeline(video_path: str, threshold: float = 0.5) -> Dict[str, Any]:
+    """
+    Extracts frames from video, computes score per frame, and aggregates video prediction.
+    """
+    sampled_frames = extract_frames(video_path, fps_sample_rate=1.0)
+    if not sampled_frames:
+        raise ValueError("No frames could be extracted from the video.")
 
+    frame_results = []
+    total_score = 0.0
 
-def _dummy_predict(path):
-    with open(path, "rb") as f:
-        seed = int(hashlib.md5(f.read()).hexdigest()[:8], 16)
-    rng = np.random.default_rng(seed)
+    try:
+        for timestamp, frame_file in sampled_frames:
+            # Predict frame score using single image pipeline
+            frame_res = run_image_pipeline(frame_file)
+            score = frame_res["score"]
+            total_score += score
+            
+            frame_results.append({
+                "t": round(timestamp, 2),
+                "score": float(score)
+            })
 
-    with Image.open(path) as im:
-        w, h = im.size
-    w, h = max(w, 128), max(h, 128)              # contract: min size 128
-    rows, cols = (h - 64) // 32 + 1, (w - 64) // 32 + 1   # patch 64, stride 32
+        avg_score = total_score / len(sampled_frames)
+        verdict = "Fake" if avg_score >= threshold else "Real"
 
-    patch_scores = rng.random((rows, cols)).round(3)
-    score = float(patch_scores.mean())
-    return {"score": score, "patch_scores": patch_scores.tolist()}
-
-
-def predict_image(path):
-    """Returns {verdict, score, patch_scores}."""
-    out = _dummy_predict(path) if DUMMY else _real_predict(path)
-    # Real ML code may return numpy types; make them plain JSON-safe Python.
-    out["score"] = float(np.clip(float(out["score"]), 0.0, 1.0))
-    out["patch_scores"] = np.clip(np.asarray(out["patch_scores"], dtype=np.float32), 0, 1).tolist()
-    # Backend owns the threshold (config.THRESHOLD); ML code does not set the verdict.
-    out["verdict"] = "fake" if out["score"] >= THRESHOLD else "real"
-    return out
+        return {
+            "verdict": verdict,
+            "score": float(avg_score),
+            "frames": frame_results
+        }
+    finally:
+        cleanup_frames(sampled_frames)

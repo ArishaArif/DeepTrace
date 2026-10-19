@@ -1,34 +1,35 @@
-import base64
-import io
-
+import cv2
 import numpy as np
-from PIL import Image
+import base64
 
-PATCH, STRIDE = 64, 32
-
-
-def _cell_grid(grid):
-    """Patch (r, c) covers pixels [r*32, r*32+64). Split the canvas into 32 px cells; each cell
-    takes the mean of the (up to 4) patches covering it. Result: (rows+1) x (cols+1), so the
-    heat lines up with the pixels the patches actually looked at (no edge stretching)."""
-    p = np.pad(grid, 1, constant_values=np.nan)
-    stack = np.stack([p[:-1, :-1], p[:-1, 1:], p[1:, :-1], p[1:, 1:]])
-    return np.nanmean(stack, axis=0).astype(np.float32)
-
-
-def render_heatmap(patch_scores, size):
-    """Turn the patch score grid into a transparent red overlay (base64 PNG).
-    Low scores are see-through, high scores are solid red.
-    size = (width, height) of the original image."""
-    grid = np.clip(np.array(patch_scores, dtype=np.float32), 0, 1)
-    cells = Image.fromarray(_cell_grid(grid), mode="F")
-    big = np.clip(np.array(cells.resize(size, Image.BICUBIC)), 0, 1)
-
-    rgba = np.zeros((size[1], size[0], 4), dtype=np.uint8)
-    rgba[..., 0] = 255
-    rgba[..., 1] = 60
-    rgba[..., 3] = (big * 255).astype(np.uint8)
-
-    buf = io.BytesIO()
-    Image.fromarray(rgba, "RGBA").save(buf, format="PNG")
-    return base64.b64encode(buf.getvalue()).decode()
+def generate_heatmap_base64(image_path: str, patch_scores: list) -> str:
+    """
+    Overlays the patch_scores grid from the Fractal Branch onto the original image
+    and returns a base64 encoded PNG data URI.
+    """
+    img = cv2.imread(image_path)
+    if img is None:
+        raise ValueError("Could not read image for heatmap generation.")
+    
+    h, w, _ = img.shape
+    scores_matrix = np.array(patch_scores, dtype=np.float32)
+    
+    # Resize patch score grid to match full original image dimensions
+    heatmap_resized = cv2.resize(scores_matrix, (w, h), interpolation=cv2.INTER_CUBIC)
+    
+    # Normalize score values (0.0 to 1.0) and map to 0-255 uint8
+    heatmap_normalized = np.uint8(255 * np.clip(heatmap_resized, 0, 1))
+    
+    # Apply JET color map (regions contributing to fake score appear warmer)
+    color_heatmap = cv2.applyColorMap(heatmap_normalized, cv2.COLORMAP_JET)
+    
+    # Blend color heatmap onto original image (60% original, 40% heatmap overlay)
+    blended = cv2.addWeighted(img, 0.6, color_heatmap, 0.4, 0)
+    
+    # Encode output to PNG byte buffer
+    success, buffer = cv2.imencode('.png', blended)
+    if not success:
+        raise RuntimeError("Failed to encode heatmap image.")
+        
+    base64_str = base64.b64encode(buffer).decode('utf-8')
+    return f"data:image/png;base64,{base64_str}"

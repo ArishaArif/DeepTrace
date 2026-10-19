@@ -1,58 +1,47 @@
-import os
+import cv2
 import tempfile
-import time
+import os
+from typing import List, Tuple
 
-import numpy as np
+def extract_frames(video_path: str, fps_sample_rate: float = 1.0) -> List[Tuple[float, str]]:
+    """
+    Extracts frames from a video at a specified sampling rate.
+    Returns a list of tuples containing (timestamp_in_seconds, frame_temp_filepath).
+    """
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        raise ValueError("Could not open video file.")
 
-from app import config
-from app.config import THRESHOLD
-from app.inference import DUMMY, INFER_SLOT, predict_image
+    video_fps = cap.get(cv2.CAP_PROP_FPS)
+    if video_fps <= 0:
+        video_fps = 30.0  # Fallback default FPS
 
-sample_frames = None
-if not DUMMY:
-    try:
-        # DEEP BRANCH: sample_frames(path) -> list of (t_seconds, PIL.Image of the cropped face)
-        from ml.video_utils import sample_frames
-    except ImportError:
-        # ml.predict can ship before ml.video_utils; keep the server (and /analyze/image) up.
-        sample_frames = None
+    frame_interval = int(video_fps / fps_sample_rate) if video_fps >= fps_sample_rate else 1
+    extracted_frames = []
+    frame_count = 0
 
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-def _spread(items, n):
-    """Pick at most n items, evenly spread over the whole video (not just the first n)."""
-    if len(items) <= n:
-        return items
-    idx = np.linspace(0, len(items) - 1, n).round().astype(int)
-    return [items[i] for i in idx]
+        if frame_count % frame_interval == 0:
+            timestamp = frame_count / video_fps
+            
+            # Save extracted frame into a temporary JPG file
+            tmp_frame = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+            cv2.imwrite(tmp_frame.name, frame)
+            tmp_frame.close()
+            
+            extracted_frames.append((timestamp, tmp_frame.name))
 
+        frame_count += 1
 
-def analyze_video(path):
-    if DUMMY:
-        rng = np.random.default_rng(len(path))
-        scored = [(float(t), float(rng.random())) for t in range(8)]
-    else:
-        if sample_frames is None:
-            raise RuntimeError("ml.video_utils.sample_frames is not available yet")
-        faces = _spread(list(sample_frames(path)), config.MAX_VIDEO_FRAMES)
-        scored = []
-        start = time.perf_counter()
-        for t, face in faces:
-            if scored and time.perf_counter() - start > config.VIDEO_TIME_BUDGET_S:
-                break                      # time budget hit: return the partial timeline
-            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-                face.save(tmp.name)
-            try:
-                with INFER_SLOT:
-                    scored.append((float(t), predict_image(tmp.name)["score"]))
-            finally:
-                os.remove(tmp.name)
+    cap.release()
+    return extracted_frames
 
-    if not scored:
-        raise ValueError("no faces found in video")
-
-    score = sum(s for _, s in scored) / len(scored)
-    return {
-        "verdict": "fake" if score >= THRESHOLD else "real",
-        "score": score,
-        "frames": [{"t": t, "score": s} for t, s in scored],
-    }
+def cleanup_frames(frame_paths: List[Tuple[float, str]]) -> None:
+    """Utility function to clean up temporary frame files."""
+    for _, path in frame_paths:
+        if os.path.exists(path):
+            os.remove(path)

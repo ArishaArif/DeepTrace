@@ -1,19 +1,17 @@
 from pydantic import BaseModel
-
-
-class ImageResult(BaseModel):
-    verdict: str                    # "fake" or "real"
-    score: float                    # 0 to 1, higher = more likely fake
-    patch_scores: list[list[float]] # rows x cols, each 0 to 1
-    heatmap_png: str                # base64 PNG, transparent overlay, same size as upload
-
+from typing import List
 
 class FrameScore(BaseModel):
-    t: float                        # seconds
+    t: float
     score: float
 
+class ImageAnalysisResponse(BaseModel):
+    verdict: str  # "Real" or "Fake"
+    score: float  # Fused prediction probability (0.0 to 1.0)
+    patch_scores: List[List[float]]  # Patch matrix from Fractal Branch
+    heatmap_png: str  # Base64 encoded PNG data URI
 
-class VideoResult(BaseModel):
-    verdict: str
-    score: float                    # mean of frame scores
-    frames: list[FrameScore]
+class VideoAnalysisResponse(BaseModel):
+    verdict: str  # "Real" or "Fake"
+    score: float  # Aggregated score over all frames
+    frames: List[FrameScore]  # Individual frame timings and scores
