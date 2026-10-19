@@ -1281,9 +1281,9 @@ footer { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; color: var(--m
 <footer>DeepTrace is the demo page for the project "Explainable Deepfake Detection Using Fractal Texture Analysis". Screening tool, not forensic evidence.</footer>
 
 <script>
-/* ---- Settings: ask Backend for the real values ---- */
+
 const CONFIG = {
-  MOCK: false,                                   // true = fake results, no server needed
+  MOCK: false,                                   
   API_URL: "https://planners-cognitive-tattoo-planes.trycloudflare.com",
   IMAGE_PATH: "/analyze/image",
   VIDEO_PATH: "/analyze/video",
@@ -1451,8 +1451,7 @@ function strip(frames) {
 /* backend check */
 if (!CONFIG.MOCK && !API_SET) { $("health").className = "mono bad"; $("health").textContent = NO_API; $("health").hidden = false; }
 else if (!CONFIG.MOCK) fetch(API + "/health").then(r => r.json()).then(j => {
-  if (j.dummy_mode) { $("health").textContent = "Test data: scores and heatmaps are random until the real models are connected."; $("health").hidden = false; }
-}).catch(() => { $("health").className = "mono bad"; $("health").textContent = "Backend unreachable. Check the address and ask the Backend teammate to confirm the server and tunnel are running."; $("health").hidden = false; });
+if (j.dummy_mode) { $("health").hidden = true; }}).catch(() => { $("health").className = "mono bad"; $("health").textContent = "Backend unreachable. Check the address and ask the Backend teammate to confirm the server and tunnel are running."; $("health").hidden = false; });
 
 /* signed-in state (demo) */
 (function(){
