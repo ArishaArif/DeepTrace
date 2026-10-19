@@ -2,11 +2,16 @@
 once the deep branch's ml/predict.py exists."""
 import hashlib
 import os
+import threading
 
 import numpy as np
 from PIL import Image
 
+from app import config
 from app.config import THRESHOLD
+
+# Limits how many model calls run at once (CPU/RAM protection). Extra requests simply wait.
+INFER_SLOT = threading.BoundedSemaphore(config.MAX_CONCURRENT_JOBS)
 
 try:
     if os.getenv("USE_DUMMY") == "1":

@@ -1,10 +1,12 @@
 import os
 import tempfile
+import time
 
 import numpy as np
 
+from app import config
 from app.config import THRESHOLD
-from app.inference import DUMMY, predict_image
+from app.inference import DUMMY, INFER_SLOT, predict_image
 
 sample_frames = None
 if not DUMMY:
@@ -16,6 +18,14 @@ if not DUMMY:
         sample_frames = None
 
 
+def _spread(items, n):
+    """Pick at most n items, evenly spread over the whole video (not just the first n)."""
+    if len(items) <= n:
+        return items
+    idx = np.linspace(0, len(items) - 1, n).round().astype(int)
+    return [items[i] for i in idx]
+
+
 def analyze_video(path):
     if DUMMY:
         rng = np.random.default_rng(len(path))
@@ -23,12 +33,17 @@ def analyze_video(path):
     else:
         if sample_frames is None:
             raise RuntimeError("ml.video_utils.sample_frames is not available yet")
+        faces = _spread(list(sample_frames(path)), config.MAX_VIDEO_FRAMES)
         scored = []
-        for t, face in sample_frames(path):
+        start = time.perf_counter()
+        for t, face in faces:
+            if scored and time.perf_counter() - start > config.VIDEO_TIME_BUDGET_S:
+                break                      # time budget hit: return the partial timeline
             with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
                 face.save(tmp.name)
             try:
-                scored.append((float(t), predict_image(tmp.name)["score"]))
+                with INFER_SLOT:
+                    scored.append((float(t), predict_image(tmp.name)["score"]))
             finally:
                 os.remove(tmp.name)
 
