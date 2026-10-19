@@ -25,6 +25,7 @@ uvicorn app.main:app --reload
 | POST | `/analyze/image` | `file` (jpg, png, webp; max 10 MB) | `{verdict, score, patch_scores, heatmap_png}` |
 | POST | `/analyze/video` | `file` (mp4, mov, avi, mkv; max 50 MB) | `{verdict, score, frames: [{t, score}]}` |
 
+Every analyze response also carries an `X-Process-Time-ms` header (the JSON body is unchanged).
 Errors always use `{"detail": "message"}` with status 400, 413, 422 or 500. Full details are in `API_CONTRACT.md`.
 
 ## Dummy mode and real models
@@ -35,7 +36,16 @@ It switches to the real models automatically when `ml/predict.py` (owned by the 
 
 - Force dummy mode: `set USE_DUMMY=1` before starting the server.
 - Real mode from the `backend` folder: the repo's `ml/` package must be importable, so run `set PYTHONPATH=..` first.
-- The decision threshold lives in `app/config.py` (`THRESHOLD`, default 0.5).
+- The decision threshold is `THRESHOLD` in `app/config.py` (default 0.5); override it with the `THRESHOLD` environment variable at deploy time.
+
+## Limits and hardening (Day 3)
+
+- Uploads are read in chunks and rejected with 413 as soon as they pass the limit; empty files give 400.
+- At most `MAX_VIDEO_FRAMES` (30) frames are scored, spread across the whole video, with a time budget (`VIDEO_TIME_BUDGET_S`).
+- `MAX_CONCURRENT_JOBS` caps simultaneous model calls; extra requests wait.
+- ML code error mapping: `ValueError` -> 422 (no face found), `OSError` -> 400 (unreadable file), anything else -> 500.
+- The real model is warmed up once at startup.
+- Deployment steps and all settings: see `DEPLOY.md`.
 
 ## Tests
 
@@ -55,10 +65,12 @@ backend/
     video.py       frame scoring and averaging
     heatmap.py     patch_scores -> transparent red PNG overlay
     schemas.py     response models
-    config.py      limits, allowed types, threshold
+    config.py      limits, allowed types, threshold (env overridable)
   test_api.py
   requirements.txt
   API_CONTRACT.md
+  DEPLOY.md
+  Dockerfile       (build from repo root)
 ```
 
 ## Notes
